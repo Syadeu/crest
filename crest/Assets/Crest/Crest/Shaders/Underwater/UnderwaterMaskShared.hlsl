@@ -101,6 +101,7 @@ Varyings Vert(Attributes v)
 
 half4 Frag(const Varyings input, const bool i_isFrontFace : SV_IsFrontFace) : SV_Target
 {
+#if CREST_HANDLE_XR
 	// @MSAAOutlineFix:
 	// The edge of the ocean surface at the near plane will be MSAA'd leaving a noticeable edge. By rendering the mask
 	// with a slightly further near plane, it exposes the edge to having the underwater fog applied which is much nicer.
@@ -108,6 +109,7 @@ half4 Frag(const Varyings input, const bool i_isFrontFace : SV_IsFrontFace) : SV
 	{
 		discard;
 	}
+#endif
 
 	if (IsUnderwater(i_isFrontFace, _ForceUnderwater))
 	{
