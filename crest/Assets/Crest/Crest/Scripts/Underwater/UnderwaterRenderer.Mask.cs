@@ -54,8 +54,6 @@ namespace Crest
             _oceanMaskCommandBuffer.SetGlobalTexture(sp_CrestOceanMaskTexture, _maskTexture.colorBuffer);
             _oceanMaskCommandBuffer.SetGlobalTexture(sp_CrestOceanMaskDepthTexture, _depthTexture.depthBuffer);
 
-            AdjustNearPlaneForMSAA(_camera, _oceanMaskCommandBuffer);
-
             PopulateOceanMask(
                 _oceanMaskCommandBuffer,
                 _camera,
@@ -64,21 +62,6 @@ namespace Crest
                 _oceanMaskMaterial.material,
                 _debug._disableOceanMask
             );
-        }
-
-        internal static void AdjustNearPlaneForMSAA(Camera camera, CommandBuffer buffer)
-        {
-            if (Helpers.IsMSAAEnabled(camera))
-            {
-                // @MSAAOutlineFix:
-                // The edge of the ocean surface at the near plane will be MSAA'd leaving a noticeable edge. By rendering
-                // the mask with a slightly further near plane, it exposes the edge to having the underwater fog applied
-                // which is much nicer.
-                var oldNearClipPlane = camera.nearClipPlane;
-                camera.nearClipPlane += 0.001f;
-                buffer.SetViewProjectionMatrices(camera.worldToCameraMatrix, camera.projectionMatrix);
-                camera.nearClipPlane = oldNearClipPlane;
-            }
         }
 
         internal static void InitialiseMaskTextures(RenderTextureDescriptor desc, ref RenderTexture textureMask, ref RenderTexture depthBuffer)
